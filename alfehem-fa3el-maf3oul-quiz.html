@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Tajawal", sans-serif; direction: rtl; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); min-height: 100vh; padding: 16px; display: flex; align-items: flex-start; justify-content: center; }
+  .quiz-container { width: 100%; max-width: 680px; }
+  .header { background: linear-gradient(135deg, #2e7d32, #43a047); border-radius: 18px; padding: 16px 20px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 16px rgba(46,125,50,0.3); }
+  .header-title { font-size: 1.1rem; font-weight: 800; color: white; }
+  .header-sub { font-size: 0.82rem; color: rgba(255,255,255,0.85); margin-top: 2px; }
+  .owl { font-size: 2.2rem; }
+  .progress-bar-wrap { background: rgba(46,125,50,0.15); border-radius: 20px; height: 10px; margin-bottom: 6px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #2e7d32, #66bb6a); border-radius: 20px; transition: width 0.4s ease; }
+  .progress-text { font-size: 0.82rem; color: #2e7d32; text-align: center; margin-bottom: 10px; font-weight: 700; }
+  .score-bar { display: flex; gap: 5px; justify-content: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .score-dot { width: 20px; height: 20px; border-radius: 50%; background: #c8e6c9; transition: all 0.3s; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 800; color: white; }
+  .score-dot.correct { background: #4caf50; }
+  .score-dot.wrong { background: #f44336; }
+  .question-card { background: white; border: 3px solid #81c784; border-radius: 20px; padding: 28px 20px; margin-bottom: 14px; box-shadow: 0 4px 18px rgba(46,125,50,0.1); text-align: center; }
+  .question-label { font-size: 0.85rem; font-weight: 800; color: #888; margin-bottom: 14px; background: #f1f8e9; padding: 4px 14px; border-radius: 20px; display: inline-block; }
+  .question-sentence { font-size: 1.5rem; font-weight: 800; color: #1b5e20; line-height: 2; margin-bottom: 20px; }
+  .highlight-word { color: #e53935; background: #ffebee; padding: 2px 8px; border-radius: 8px; border-bottom: 3px solid #e53935; }
+  .question-instruction { font-size: 1rem; color: #555; margin-bottom: 18px; font-weight: 700; }
+  .answer-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .answer-btn { padding: 16px 8px; border-radius: 16px; border: 3px solid; font-size: 1rem; font-weight: 900; font-family: "Tajawal", sans-serif; cursor: pointer; transition: all 0.2s; line-height: 1.4; text-align: center; }
+  .btn-fa3el { background: linear-gradient(135deg, #e3f2fd, #90caf9); border-color: #1565c0; color: #0d47a1; }
+  .btn-fa3el:hover:not(:disabled) { background: linear-gradient(135deg, #90caf9, #42a5f5); transform: translateY(-3px); box-shadow: 0 6px 18px rgba(21,101,192,0.35); }
+  .btn-maf3oul { background: linear-gradient(135deg, #fff8e1, #ffe082); border-color: #f9a825; color: #e65100; }
+  .btn-maf3oul:hover:not(:disabled) { background: linear-gradient(135deg, #ffe082, #ffc107); transform: translateY(-3px); box-shadow: 0 6px 18px rgba(249,168,37,0.35); }
+  .btn-other { background: linear-gradient(135deg, #f3e5f5, #ce93d8); border-color: #6a1b9a; color: #4a148c; }
+  .btn-other:hover:not(:disabled) { background: linear-gradient(135deg, #ce93d8, #ab47bc); transform: translateY(-3px); box-shadow: 0 6px 18px rgba(106,27,154,0.35); }
+  .answer-btn:disabled { cursor: default; opacity: 0.85; transform: none !important; }
+  .answer-btn.correct-ans { background: linear-gradient(135deg, #c8f7c5, #4caf50) !important; border-color: #2e7d32 !important; color: white !important; }
+  .answer-btn.wrong-ans { background: linear-gradient(135deg, #ffc8c8, #f44336) !important; border-color: #c62828 !important; color: white !important; animation: shake 0.4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .btn-sub { display: block; font-size: 0.68rem; font-weight: 700; opacity: 0.85; margin-top: 3px; }
+  .feedback { text-align: center; padding: 12px 16px; border-radius: 14px; font-size: 1rem; font-weight: 800; margin-bottom: 14px; display: none; line-height: 1.6; }
+  .feedback.correct-fb { background: #e8f5e9; color: #2e7d32; border: 2px solid #4caf50; }
+  .feedback.wrong-fb { background: #ffebee; color: #c62828; border: 2px solid #f44336; }
+  .next-btn { width: 100%; padding: 14px; background: linear-gradient(90deg, #2e7d32, #43a047); color: white; border: none; border-radius: 14px; font-size: 1.05rem; font-weight: 800; font-family: "Tajawal", sans-serif; cursor: pointer; display: none; box-shadow: 0 3px 10px rgba(46,125,50,0.3); transition: transform 0.15s; }
+  .next-btn:hover { transform: translateY(-2px); }
+  .result-screen { background: white; border: 3px solid #81c784; border-radius: 20px; padding: 30px 20px; text-align: center; display: none; }
+  .result-owl { font-size: 4rem; margin-bottom: 12px; }
+  .result-title { font-size: 1.5rem; font-weight: 800; color: #1b5e20; margin-bottom: 8px; }
+  .result-stars { font-size: 2.2rem; margin-bottom: 16px; }
+  .result-score { font-size: 1rem; color: #2e7d32; margin-bottom: 22px; line-height: 1.8; }
+  .retry-btn { background: linear-gradient(90deg, #2e7d32, #43a047); color: white; border: none; border-radius: 25px; padding: 12px 30px; font-size: 1rem; font-weight: 800; font-family: "Tajawal", sans-serif; cursor: pointer; }
+  .loader-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s ease; }
+  .loader-overlay.hidden { opacity: 0; pointer-events: none; }
+  .loader-owl { font-size: 3.5rem; animation: bounce 0.8s infinite; margin-bottom: 16px; }
+  .loader-title { font-size: 1.2rem; font-weight: 800; color: #1b5e20; margin-bottom: 16px; }
+  .loader-bar { width: 200px; height: 8px; background: #a5d6a7; border-radius: 10px; overflow: hidden; }
+  .loader-fill { height: 100%; background: linear-gradient(90deg, #2e7d32, #66bb6a); border-radius: 10px; animation: load-anim 1.5s ease-in-out infinite; }
+  .loader-sub { font-size: 0.85rem; color: #388e3c; font-weight: 700; margin-top: 10px; }
+  @keyframes load-anim { 0%{width:0%} 60%{width:80%} 100%{width:100%} }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  @media (max-width: 480px) { .question-sentence { font-size: 1.2rem; } .answer-btn { font-size: 0.85rem; padding: 12px 6px; } .answer-btns { gap: 8px; } }
+</style>
+</head>
+<body>
+<div class="loader-overlay" id="loaderOverlay">
+  <div class="loader-owl">🦉</div>
+  <div class="loader-title">الفَاعِلُ وَالمَفْعُولُ بِهِ</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-sub">جارٍ التحميل...</div>
+</div>
+<div class="quiz-container">
+  <div class="header">
+    <div>
+      <div class="header-title">⚖️ الفَاعِلُ وَالمَفْعُولُ بِهِ</div>
+      <div class="header-sub">30 سؤالاً – حدّد نوع الكلمة الحمراء</div>
+    </div>
+    <div class="owl">🦉</div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar" style="width:0%"></div></div>
+  <div class="progress-text" id="progressText">السؤال 1 من 30</div>
+  <div class="score-bar" id="scoreBar"></div>
+  <div class="question-card" id="questionCard">
+    <div class="question-label" id="questionLabel">السؤال 1</div>
+    <div class="question-sentence" id="questionSentence"></div>
+    <div class="question-instruction">ما نوع الكلمة الحمراء؟</div>
+    <div class="answer-btns">
+      <button class="answer-btn btn-fa3el" id="btnFa3el" onclick="checkAnswer('فاعل')">
+        فَاعِلٌ
+        <span class="btn-sub">يقوم بالفعل – مرفوع</span>
+      </button>
+      <button class="answer-btn btn-maf3oul" id="btnMaf3oul" onclick="checkAnswer('مفعول به')">
+        مَفْعُولٌ بِهِ
+        <span class="btn-sub">وقع عليه الفعل – منصوب</span>
+      </button>
+      <button class="answer-btn btn-other" id="btnOther" onclick="checkAnswer('ليس منهما')">
+        لَيْسَ مِنْهُمَا
+        <span class="btn-sub">مبتدأ / خبر / مجرور</span>
+      </button>
+    </div>
+  </div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">السؤال التالي ←</button>
+  <div class="result-screen" id="resultScreen">
+    <div class="result-owl" id="resultOwl">🦉</div>
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-score" id="resultScore"></div>
+    <button class="retry-btn" onclick="restartQuiz()">🔄 حاول مرة أخرى</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {
+    "sentence": "كَتَبَ <span class=\"highlight-word\">الطَّالِبُ</span> الدَّرْسَ",
+    "answer": "فاعل",
+    "feedback": "الطَّالِبُ فاعل مرفوع بالضمة – هو من قام بفعل الكتابة"
+  },
+  {
+    "sentence": "أَكَلَ <span class=\"highlight-word\">الوَلَدُ</span> التُّفَّاحَةَ",
+    "answer": "فاعل",
+    "feedback": "الوَلَدُ فاعل مرفوع بالضمة – هو من أكل التفاحة"
+  },
+  {
+    "sentence": "فَتَحَتِ <span class=\"highlight-word\">الأُمُّ</span> البَابَ",
+    "answer": "فاعل",
+    "feedback": "الأُمُّ فاعل مرفوع بالضمة – هي من فتحت الباب"
+  },
+  {
+    "sentence": "نَجَحَ <span class=\"highlight-word\">الطُّلَّابُ</span> فِي الاِمْتِحَانِ",
+    "answer": "فاعل",
+    "feedback": "الطُّلَّابُ فاعل مرفوع بالضمة – هم من نجحوا"
+  },
+  {
+    "sentence": "وَصَلَ <span class=\"highlight-word\">القِطَارُ</span> إِلَى المَحَطَّةِ",
+    "answer": "فاعل",
+    "feedback": "القِطَارُ فاعل مرفوع بالضمة – هو الذي وصل"
+  },
+  {
+    "sentence": "رَكَضَ <span class=\"highlight-word\">اللَّاعِبَانِ</span> فِي المَلْعَبِ",
+    "answer": "فاعل",
+    "feedback": "اللَّاعِبَانِ فاعل مرفوع بالألف لأنه مثنى"
+  },
+  {
+    "sentence": "حَضَرَتِ <span class=\"highlight-word\">المُعَلِّمَاتُ</span> إِلَى الاِجْتِمَاعِ",
+    "answer": "فاعل",
+    "feedback": "المُعَلِّمَاتُ فاعل مرفوع بالضمة – جمع مؤنث سالم"
+  },
+  {
+    "sentence": "سَافَرَ <span class=\"highlight-word\">أَبُو</span> سَالِمٍ إِلَى تُونُسَ",
+    "answer": "فاعل",
+    "feedback": "أَبُو فاعل مرفوع بالواو لأنه من الأسماء الخمسة"
+  },
+  {
+    "sentence": "عَادَ <span class=\"highlight-word\">أَخُو</span> سَامِرٍ مِنَ السَّفَرِ",
+    "answer": "فاعل",
+    "feedback": "أَخُو فاعل مرفوع بالواو لأنه من الأسماء الخمسة"
+  },
+  {
+    "sentence": "شَرِبَتِ <span class=\"highlight-word\">البِنْتَانِ</span> الحَلِيبَ",
+    "answer": "فاعل",
+    "feedback": "البِنْتَانِ فاعل مرفوع بالألف لأنه مثنى مؤنث"
+  },
+  {
+    "sentence": "كَتَبَ الطَّالِبُ <span class=\"highlight-word\">الدَّرْسَ</span>",
+    "answer": "مفعول به",
+    "feedback": "الدَّرْسَ مفعول به منصوب بالفتحة – هو الذي وقع عليه فعل الكتابة"
+  },
+  {
+    "sentence": "أَكَلَ الوَلَدُ <span class=\"highlight-word\">التُّفَّاحَةَ</span>",
+    "answer": "مفعول به",
+    "feedback": "التُّفَّاحَةَ مفعول به منصوب بالفتحة – هي التي وقع عليها فعل الأكل"
+  },
+  {
+    "sentence": "فَتَحَ المُعَلِّمُ <span class=\"highlight-word\">البَابَ</span>",
+    "answer": "مفعول به",
+    "feedback": "البَابَ مفعول به منصوب بالفتحة – هو الذي وقع عليه فعل الفتح"
+  },
+  {
+    "sentence": "رَسَمَ الفَنَّانُ <span class=\"highlight-word\">لَوْحَةً</span> جَمِيلَةً",
+    "answer": "مفعول به",
+    "feedback": "لَوْحَةً مفعول به منصوب بالتنوين – هي التي رسمها الفنان"
+  },
+  {
+    "sentence": "أَكْرَمَ المُدِيرُ <span class=\"highlight-word\">المُجْتَهِدِينَ</span>",
+    "answer": "مفعول به",
+    "feedback": "المُجْتَهِدِينَ مفعول به منصوب بالياء – جمع مذكر سالم"
+  },
+  {
+    "sentence": "زَرَعَ الفَلَّاحُ <span class=\"highlight-word\">القَمْحَ</span>",
+    "answer": "مفعول به",
+    "feedback": "القَمْحَ مفعول به منصوب بالفتحة – هو الذي زرعه الفلاح"
+  },
+  {
+    "sentence": "شَاهَدَ الأَطْفَالُ <span class=\"highlight-word\">الفِيلْمَ</span>",
+    "answer": "مفعول به",
+    "feedback": "الفِيلْمَ مفعول به منصوب بالفتحة – هو الذي شاهده الأطفال"
+  },
+  {
+    "sentence": "زُرْتُ <span class=\"highlight-word\">أَبَا</span> خَالِدٍ أَمْسِ",
+    "answer": "مفعول به",
+    "feedback": "أَبَا مفعول به منصوب بالألف لأنه من الأسماء الخمسة"
+  },
+  {
+    "sentence": "كَافَأَ الأُسْتَاذُ <span class=\"highlight-word\">الطَّالِبَاتِ</span>",
+    "answer": "مفعول به",
+    "feedback": "الطَّالِبَاتِ مفعول به منصوب بالكسرة نيابة عن الفتحة – جمع مؤنث سالم"
+  },
+  {
+    "sentence": "قَرَأَتِ البِنْتُ <span class=\"highlight-word\">الكِتَابَ</span>",
+    "answer": "مفعول به",
+    "feedback": "الكِتَابَ مفعول به منصوب بالفتحة – هو الذي قرأته البنت"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">الكِتَابُ</span> مُفِيدٌ",
+    "answer": "ليس منهما",
+    "feedback": "الكِتَابُ مبتدأ مرفوع – جملة اسمية لا فاعل ولا مفعول به فيها"
+  },
+  {
+    "sentence": "المُعَلِّمُ <span class=\"highlight-word\">طَيِّبٌ</span>",
+    "answer": "ليس منهما",
+    "feedback": "طَيِّبٌ خبر مرفوع للمبتدأ – ليس فاعلاً ولا مفعولاً به"
+  },
+  {
+    "sentence": "جَلَسَ الوَلَدُ عَلَى <span class=\"highlight-word\">الكُرْسِيِّ</span>",
+    "answer": "ليس منهما",
+    "feedback": "الكُرْسِيِّ اسم مجرور بـ(على) – ليس فاعلاً ولا مفعولاً به"
+  },
+  {
+    "sentence": "ذَهَبَ التِّلْمِيذُ إِلَى <span class=\"highlight-word\">المَدْرَسَةِ</span>",
+    "answer": "ليس منهما",
+    "feedback": "المَدْرَسَةِ اسم مجرور بـ(إلى) – ليس فاعلاً ولا مفعولاً به"
+  },
+  {
+    "sentence": "كُسِرَتِ <span class=\"highlight-word\">الزُّجَاجَةُ</span>",
+    "answer": "ليس منهما",
+    "feedback": "الزُّجَاجَةُ نائب فاعل مرفوع – الفعل مبني للمجهول"
+  },
+  {
+    "sentence": "فُتِحَ <span class=\"highlight-word\">البَابُ</span> صَبَاحًا",
+    "answer": "ليس منهما",
+    "feedback": "البَابُ نائب فاعل مرفوع – الفعل (فُتِحَ) مبني للمجهول"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">السَّمَاءُ</span> صَافِيَةٌ",
+    "answer": "ليس منهما",
+    "feedback": "السَّمَاءُ مبتدأ مرفوع – جملة اسمية لا فاعل فيها"
+  },
+  {
+    "sentence": "نَامَ الطِّفْلُ <span class=\"highlight-word\">بَاكِرًا</span>",
+    "answer": "ليس منهما",
+    "feedback": "بَاكِرًا حال منصوب – يصف هيئة الطفل وليس فاعلاً ولا مفعولاً به"
+  },
+  {
+    "sentence": "جَاءَ المُعَلِّمُ <span class=\"highlight-word\">مُبْتَسِمًا</span>",
+    "answer": "ليس منهما",
+    "feedback": "مُبْتَسِمًا حال منصوب – يصف هيئة المعلم عند مجيئه"
+  },
+  {
+    "sentence": "الجَوُّ <span class=\"highlight-word\">بَارِدٌ</span> اليَوْمَ",
+    "answer": "ليس منهما",
+    "feedback": "بَارِدٌ خبر مرفوع للمبتدأ (الجَوُّ) – ليس فاعلاً ولا مفعولاً به"
+  }
+];
+let current=0,score=0,answered=false;
+function initScoreBar(){const bar=document.getElementById("scoreBar");bar.innerHTML="";for(let i=0;i<questions.length;i++){const dot=document.createElement("div");dot.className="score-dot";dot.id="dot-"+i;bar.appendChild(dot);}}
+function loadQuestion(){answered=false;const q=questions[current];document.getElementById("progressBar").style.width=(current/questions.length*100)+"%";document.getElementById("progressText").textContent="السؤال "+(current+1)+" من "+questions.length;document.getElementById("questionLabel").textContent="السؤال "+(current+1);document.getElementById("questionSentence").innerHTML=q.sentence;document.getElementById("feedback").style.display="none";document.getElementById("nextBtn").style.display="none";document.getElementById("btnFa3el").disabled=false;document.getElementById("btnMaf3oul").disabled=false;document.getElementById("btnOther").disabled=false;document.getElementById("btnFa3el").className="answer-btn btn-fa3el";document.getElementById("btnMaf3oul").className="answer-btn btn-maf3oul";document.getElementById("btnOther").className="answer-btn btn-other";}
+function checkAnswer(selected){if(answered)return;answered=true;const q=questions[current];const isCorrect=selected===q.answer;const feedback=document.getElementById("feedback");document.getElementById("btnFa3el").disabled=true;document.getElementById("btnMaf3oul").disabled=true;document.getElementById("btnOther").disabled=true;
+if(q.answer==="فاعل")document.getElementById("btnFa3el").classList.add("correct-ans");
+else if(q.answer==="مفعول به")document.getElementById("btnMaf3oul").classList.add("correct-ans");
+else document.getElementById("btnOther").classList.add("correct-ans");
+if(isCorrect){feedback.textContent="✅ "+["ممتاز! 🎉","أحسنت! 🌟","رائع! 👏","صحيح تماماً! 🏆"][Math.floor(Math.random()*4)]+" — "+q.feedback;feedback.className="feedback correct-fb";score++;document.getElementById("dot-"+current).classList.add("correct");document.getElementById("dot-"+current).textContent="✓";}
+else{if(selected==="فاعل")document.getElementById("btnFa3el").classList.add("wrong-ans");else if(selected==="مفعول به")document.getElementById("btnMaf3oul").classList.add("wrong-ans");else document.getElementById("btnOther").classList.add("wrong-ans");
+const labels={"فاعل":"فَاعِلٌ","مفعول به":"مَفْعُولٌ بِهِ","ليس منهما":"لَيْسَ مِنْهُمَا"};
+feedback.innerHTML="❌ الإجابة الصحيحة: <strong>"+labels[q.answer]+"</strong><br><small>"+q.feedback+"</small>";feedback.className="feedback wrong-fb";document.getElementById("dot-"+current).classList.add("wrong");document.getElementById("dot-"+current).textContent="✗";}
+feedback.style.display="block";document.getElementById("nextBtn").style.display="block";document.getElementById("nextBtn").textContent=current<questions.length-1?"السؤال التالي ←":"🏆 اعرض النتيجة";}
+function nextQuestion(){current++;if(current>=questions.length)showResult();else loadQuestion();}
+function showResult(){document.getElementById("questionCard").style.display="none";document.getElementById("feedback").style.display="none";document.getElementById("nextBtn").style.display="none";document.getElementById("progressBar").style.width="100%";const pct=score/questions.length;let owl,title,stars;if(pct===1){owl="🦉✨";title="ممتاز! أتقنتَ الفاعل والمفعول به! 🏆";stars="⭐⭐⭐";}else if(pct>=0.8){owl="🦉🌟";title="أحسنت! عمل رائع!";stars="⭐⭐⭐";}else if(pct>=0.6){owl="🦉👍";title="جيد! راجع القاعدة!";stars="⭐⭐";}else if(pct>=0.4){owl="🦉💪";title="حاول مرة أخرى!";stars="⭐";}else{owl="🦉🔄";title="لا تستسلم!";stars="💪";}document.getElementById("resultOwl").textContent=owl;document.getElementById("resultTitle").textContent=title;document.getElementById("resultStars").textContent=stars;document.getElementById("resultScore").innerHTML="أجبت على <strong>"+score+"</strong> من أصل <strong>"+questions.length+"</strong><br>نسبة النجاح: <strong>"+Math.round(pct*100)+"%</strong>";document.getElementById("resultScreen").style.display="block";}
+function restartQuiz(){current=0;score=0;document.getElementById("questionCard").style.display="block";document.getElementById("resultScreen").style.display="none";initScoreBar();loadQuestion();}
+window.addEventListener("load",function(){setTimeout(function(){var o=document.getElementById("loaderOverlay");if(o){o.classList.add("hidden");setTimeout(function(){o.style.display="none";},500);}},500);});
+initScoreBar();loadQuestion();
+</script>
+</body>
+</html>
