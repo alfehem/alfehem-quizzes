@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Tajawal', sans-serif;
+    direction: rtl;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    min-height: 100vh;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .quiz-container { width: 100%; max-width: 680px; }
+
+  .header {
+    background: linear-gradient(135deg, #2e7d32, #43a047);
+    border-radius: 18px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 16px rgba(46,125,50,0.3);
+  }
+  .header-title { font-size: 1.15rem; font-weight: 800; color: white; }
+  .header-sub { font-size: 0.82rem; color: rgba(255,255,255,0.85); margin-top: 2px; }
+  .owl { font-size: 2.2rem; }
+
+  .progress-bar-wrap { background: rgba(46,125,50,0.15); border-radius: 20px; height: 10px; margin-bottom: 6px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #2e7d32, #66bb6a); border-radius: 20px; transition: width 0.4s ease; }
+  .progress-text { font-size: 0.82rem; color: #2e7d32; text-align: center; margin-bottom: 10px; font-weight: 700; }
+
+  .score-bar { display: flex; gap: 5px; justify-content: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .score-dot { width: 20px; height: 20px; border-radius: 50%; background: #c8e6c9; transition: all 0.3s; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 800; color: white; }
+  .score-dot.correct { background: #4caf50; }
+  .score-dot.wrong { background: #f44336; }
+
+  .question-card {
+    background: white;
+    border: 3px solid #81c784;
+    border-radius: 20px;
+    padding: 28px 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 18px rgba(46,125,50,0.1);
+    text-align: center;
+  }
+
+  .question-label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #888;
+    margin-bottom: 14px;
+    background: #f1f8e9;
+    padding: 4px 14px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+
+  .question-sentence {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1b5e20;
+    line-height: 2;
+    margin-bottom: 20px;
+  }
+
+  .highlight-word {
+    color: #e53935;
+    background: #ffebee;
+    padding: 2px 8px;
+    border-radius: 8px;
+    border-bottom: 3px solid #e53935;
+    cursor: default;
+  }
+
+  .question-instruction {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 18px;
+    font-weight: 700;
+  }
+
+  .answer-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .answer-btn {
+    padding: 18px 10px;
+    border-radius: 16px;
+    border: 3px solid;
+    font-size: 1.3rem;
+    font-weight: 900;
+    font-family: 'Tajawal', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    line-height: 1.4;
+  }
+
+  .btn-nakirah {
+    background: linear-gradient(135deg, #fff8e1, #ffe082);
+    border-color: #f9a825;
+    color: #e65100;
+  }
+  .btn-nakirah:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ffe082, #ffc107);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(249,168,37,0.4);
+  }
+
+  .btn-marifah {
+    background: linear-gradient(135deg, #e3f2fd, #90caf9);
+    border-color: #1565c0;
+    color: #0d47a1;
+  }
+  .btn-marifah:hover:not(:disabled) {
+    background: linear-gradient(135deg, #90caf9, #42a5f5);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(21,101,192,0.4);
+  }
+
+  .answer-btn:disabled { cursor: default; opacity: 0.85; transform: none !important; }
+  .answer-btn.correct-ans { background: linear-gradient(135deg, #c8f7c5, #4caf50) !important; border-color: #2e7d32 !important; color: white !important; }
+  .answer-btn.wrong-ans { background: linear-gradient(135deg, #ffc8c8, #f44336) !important; border-color: #c62828 !important; color: white !important; animation: shake 0.4s; }
+
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  .btn-sub { display: block; font-size: 0.72rem; font-weight: 700; opacity: 0.8; margin-top: 2px; }
+
+  .feedback {
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: none;
+    line-height: 1.6;
+  }
+  .feedback.correct-fb { background: #e8f5e9; color: #2e7d32; border: 2px solid #4caf50; }
+  .feedback.wrong-fb { background: #ffebee; color: #c62828; border: 2px solid #f44336; }
+
+  .next-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(90deg, #2e7d32, #43a047);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    font-family: 'Tajawal', sans-serif;
+    cursor: pointer;
+    display: none;
+    box-shadow: 0 3px 10px rgba(46,125,50,0.3);
+    transition: transform 0.15s;
+  }
+  .next-btn:hover { transform: translateY(-2px); }
+
+  .result-screen {
+    background: white;
+    border: 3px solid #81c784;
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    display: none;
+  }
+  .result-owl { font-size: 4rem; margin-bottom: 12px; }
+  .result-title { font-size: 1.5rem; font-weight: 800; color: #1b5e20; margin-bottom: 8px; }
+  .result-stars { font-size: 2.2rem; margin-bottom: 16px; }
+  .result-score { font-size: 1rem; color: #2e7d32; margin-bottom: 22px; line-height: 1.8; }
+  .retry-btn {
+    background: linear-gradient(90deg, #2e7d32, #43a047);
+    color: white; border: none; border-radius: 25px;
+    padding: 12px 30px; font-size: 1rem; font-weight: 800;
+    font-family: 'Tajawal', sans-serif; cursor: pointer;
+  }
+
+  @media (max-width: 480px) {
+    .question-sentence { font-size: 1.2rem; }
+    .answer-btn { font-size: 1.1rem; padding: 14px 8px; }
+  }
+
+  .loader-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; z-index: 9999; transition: opacity 0.5s ease;
+  }
+  .loader-overlay.hidden { opacity: 0; pointer-events: none; }
+  .loader-owl { font-size: 3.5rem; animation: bounce 0.8s infinite; margin-bottom: 16px; }
+  .loader-title { font-size: 1.2rem; font-weight: 800; color: #1b5e20; margin-bottom: 16px; }
+  .loader-bar { width: 200px; height: 8px; background: #a5d6a7; border-radius: 10px; overflow: hidden; }
+  .loader-fill { height: 100%; background: linear-gradient(90deg, #2e7d32, #66bb6a); border-radius: 10px; animation: load-anim 1.5s ease-in-out infinite; }
+  .loader-sub { font-size: 0.85rem; color: #388e3c; font-weight: 700; margin-top: 10px; }
+  @keyframes load-anim { 0%{width:0%} 60%{width:80%} 100%{width:100%} }
+
+</style>
+</head>
+<body>
+<div class="loader-overlay" id="loaderOverlay">
+  <div class="loader-owl">🦉</div>
+  <div class="loader-title">الفِعْلُ اللَّازِمُ وَالمُتَعَدِّي</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-sub">جارٍ التحميل...</div>
+</div>
+<div class="quiz-container">
+
+  <div class="header">
+    <div>
+      <div class="header-title">➡️ الفِعْلُ اللَّازِمُ وَالمُتَعَدِّي</div>
+      <div class="header-sub">30 سؤالاً – حدّد نوع الفعل الأحمر</div>
+    </div>
+    <div class="owl">🦉</div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="progress-text" id="progressText">السؤال 1 من 30</div>
+  <div class="score-bar" id="scoreBar"></div>
+
+  <div class="question-card" id="questionCard">
+    <div class="question-label" id="questionLabel">السؤال 1</div>
+    <div class="question-sentence" id="questionSentence"></div>
+    <div class="question-instruction">ما نوع الفعل الأحمر؟</div>
+    <div class="answer-btns">
+      <button class="answer-btn btn-nakirah" id="btnLazim" onclick="checkAnswer('لازم')">
+        نَكِرَةٌ
+        <span class="btn-sub">بدون ال – غير محدد</span>
+      </button>
+      <button class="answer-btn btn-marifah" id="btnMutaaddi" onclick="checkAnswer('متعدٍّ')">
+        مَعْرِفَةٌ
+        <span class="btn-sub">بـ ال أو اسم علم</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">السؤال التالي ←</button>
+
+  <div class="result-screen" id="resultScreen">
+    <div class="result-owl" id="resultOwl">🦉</div>
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-score" id="resultScore"></div>
+    <button class="retry-btn" onclick="restartQuiz()">🔄 حاول مرة أخرى</button>
+  </div>
+
+</div>
+<script>
+const questions = [
+  {
+    "sentence": "<span class=\"highlight-word\">ذَهَبَ</span> الوَلَدُ إِلَى المَدْرَسَةِ",
+    "answer": "لازم",
+    "feedback": "ذَهَبَ فعل لازم – لا يحتاج مفعولاً به، يكتفي بالفاعل"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">نَامَ</span> الطِّفْلُ بَاكِرًا",
+    "answer": "لازم",
+    "feedback": "نَامَ فعل لازم – لا يقع على مفعول به، يكتفي بالفاعل"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">وَقَفَ</span> المُعَلِّمُ أَمَامَ الفَصْلِ",
+    "answer": "لازم",
+    "feedback": "وَقَفَ فعل لازم – لا يتعدى إلى مفعول به"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">جَلَسَ</span> الطُّلَّابُ فِي الفَصْلِ",
+    "answer": "لازم",
+    "feedback": "جَلَسَ فعل لازم – لا يحتاج مفعولاً به"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">سَقَطَ</span> الوَلَدُ مِنَ الشَّجَرَةِ",
+    "answer": "لازم",
+    "feedback": "سَقَطَ فعل لازم – لا يتعدى إلى مفعول به"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">مَرِضَ</span> الطِّفْلُ أَمْسِ",
+    "answer": "لازم",
+    "feedback": "مَرِضَ فعل لازم – لا يقع على مفعول به"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">خَرَجَ</span> التِّلْمِيذُ مِنَ الفَصْلِ",
+    "answer": "لازم",
+    "feedback": "خَرَجَ فعل لازم – لا يتعدى إلى مفعول به"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">رَكَضَ</span> الأَوْلَادُ فِي الحَدِيقَةِ",
+    "answer": "لازم",
+    "feedback": "رَكَضَ فعل لازم – لا يحتاج مفعولاً به"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">ضَحِكَ</span> الوَلَدُ كَثِيرًا",
+    "answer": "لازم",
+    "feedback": "ضَحِكَ فعل لازم – لا يتعدى إلى مفعول به"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">بَكَى</span> الطِّفْلُ مِنَ الأَلَمِ",
+    "answer": "لازم",
+    "feedback": "بَكَى فعل لازم – لا يقع على مفعول به"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">سَافَرَ</span> الأَبُ إِلَى تُونُسَ",
+    "answer": "لازم",
+    "feedback": "سَافَرَ فعل لازم – لا يحتاج مفعولاً به"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">نَهَضَ</span> الطَّالِبُ مِنْ مَقْعَدِهِ",
+    "answer": "لازم",
+    "feedback": "نَهَضَ فعل لازم – لا يتعدى إلى مفعول به"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">عَادَ</span> الأَبُ مِنَ العَمَلِ",
+    "answer": "لازم",
+    "feedback": "عَادَ فعل لازم – لا يحتاج مفعولاً به"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">كَتَبَ</span> الطَّالِبُ الدَّرْسَ",
+    "answer": "متعدٍّ",
+    "feedback": "كَتَبَ فعل متعدٍّ – تعدى إلى مفعوله (الدَّرْسَ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">قَرَأَ</span> الوَلَدُ الكِتَابَ",
+    "answer": "متعدٍّ",
+    "feedback": "قَرَأَ فعل متعدٍّ – تعدى إلى مفعوله (الكِتَابَ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">أَكَلَ</span> الطِّفْلُ التُّفَّاحَةَ",
+    "answer": "متعدٍّ",
+    "feedback": "أَكَلَ فعل متعدٍّ – تعدى إلى مفعوله (التُّفَّاحَةَ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">شَرِبَ</span> الوَلَدُ الحَلِيبَ",
+    "answer": "متعدٍّ",
+    "feedback": "شَرِبَ فعل متعدٍّ – تعدى إلى مفعوله (الحَلِيبَ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">فَتَحَ</span> المُعَلِّمُ البَابَ",
+    "answer": "متعدٍّ",
+    "feedback": "فَتَحَ فعل متعدٍّ – تعدى إلى مفعوله (البَابَ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">حَمَلَ</span> الوَلَدُ الحَقِيبَةَ",
+    "answer": "متعدٍّ",
+    "feedback": "حَمَلَ فعل متعدٍّ – تعدى إلى مفعوله (الحَقِيبَةَ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">شَاهَدَ</span> الأَطْفَالُ الفِيلْمَ",
+    "answer": "متعدٍّ",
+    "feedback": "شَاهَدَ فعل متعدٍّ – تعدى إلى مفعوله (الفِيلْمَ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">بَنَى</span> العُمَّالُ البَيْتَ",
+    "answer": "متعدٍّ",
+    "feedback": "بَنَى فعل متعدٍّ – تعدى إلى مفعوله (البَيْتَ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">زَرَعَ</span> الفَلَّاحُ القَمْحَ",
+    "answer": "متعدٍّ",
+    "feedback": "زَرَعَ فعل متعدٍّ – تعدى إلى مفعوله (القَمْحَ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">أَحَبَّ</span> التِّلْمِيذُ مُعَلِّمَهُ",
+    "answer": "متعدٍّ",
+    "feedback": "أَحَبَّ فعل متعدٍّ – تعدى إلى مفعوله (مُعَلِّمَهُ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">كَسَرَ</span> الوَلَدُ الزُّجَاجَةَ",
+    "answer": "متعدٍّ",
+    "feedback": "كَسَرَ فعل متعدٍّ – تعدى إلى مفعوله (الزُّجَاجَةَ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">رَسَمَ</span> الفَنَّانُ لَوْحَةً",
+    "answer": "متعدٍّ",
+    "feedback": "رَسَمَ فعل متعدٍّ – تعدى إلى مفعوله (لَوْحَةً)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">جَاءَ</span> الأَبُ مِنَ العَمَلِ",
+    "answer": "لازم",
+    "feedback": "جَاءَ فعل لازم – لا يتعدى إلى مفعول به"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">فَهِمَ</span> الطَّالِبُ الدَّرْسَ",
+    "answer": "متعدٍّ",
+    "feedback": "فَهِمَ فعل متعدٍّ – تعدى إلى مفعوله (الدَّرْسَ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">غَضِبَ</span> الأَبُ مِنِ ابْنِهِ",
+    "answer": "لازم",
+    "feedback": "غَضِبَ فعل لازم – لا يتعدى إلى مفعول به مباشر"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">نَظَّفَ</span> الوَلَدُ غُرْفَتَهُ",
+    "answer": "متعدٍّ",
+    "feedback": "نَظَّفَ فعل متعدٍّ – تعدى إلى مفعوله (غُرْفَتَهُ)"
+  },
+  {
+    "sentence": "<span class=\"highlight-word\">صَعَدَ</span> الوَلَدُ إِلَى السَّطْحِ",
+    "answer": "لازم",
+    "feedback": "صَعَدَ فعل لازم – لا يتعدى إلى مفعول به مباشر"
+  }
+];
+
+let current = 0, score = 0, answered = false;
+
+function initScoreBar() {
+  const bar = document.getElementById('scoreBar');
+  bar.innerHTML = '';
+  for (let i = 0; i < questions.length; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'score-dot';
+    dot.id = `dot-${i}`;
+    bar.appendChild(dot);
+  }
+}
+
+function loadQuestion() {
+  answered = false;
+  const q = questions[current];
+  const pct = (current / questions.length) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `السؤال ${current + 1} من ${questions.length}`;
+  document.getElementById('questionLabel').textContent = `السؤال ${current + 1}`;
+  document.getElementById('questionSentence').innerHTML = q.sentence;
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('btnLazim').disabled = false;
+  document.getElementById('btnMutaaddi').disabled = false;
+  document.getElementById('btnLazim').className = 'answer-btn btn-nakirah';
+  document.getElementById('btnMutaaddi').className = 'answer-btn btn-marifah';
+}
+
+function checkAnswer(selected) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const isCorrect = selected === q.answer;
+  const feedback = document.getElementById('feedback');
+  const nakirahBtn = document.getElementById('btnLazim');
+  const marifahBtn = document.getElementById('btnMutaaddi');
+
+  nakirahBtn.disabled = true;
+  marifahBtn.disabled = true;
+
+  // Highlight correct answer
+  if (q.answer === 'لازم') nakirahBtn.classList.add('correct-ans');
+  else marifahBtn.classList.add('correct-ans');
+
+  if (isCorrect) {
+    feedback.textContent = '✅ ' + ['ممتاز! 🎉', 'أحسنت! 🌟', 'رائع! 👏', 'صحيح تماماً! 🏆'][Math.floor(Math.random() * 4)] + ' — ' + q.feedback;
+    feedback.className = 'feedback correct-fb';
+    score++;
+    document.getElementById(`dot-${current}`).classList.add('correct');
+    document.getElementById(`dot-${current}`).textContent = '✓';
+  } else {
+    if (selected === 'لازم') nakirahBtn.classList.add('wrong-ans');
+    else marifahBtn.classList.add('wrong-ans');
+    feedback.innerHTML = `❌ الإجابة الصحيحة: <strong>${q.answer === 'لازم' ? 'فِعْلٌ لَازِمٌ' : 'فِعْلٌ مُتَعَدٍّ'}</strong><br><small>${q.feedback}</small>`;
+    feedback.className = 'feedback wrong-fb';
+    document.getElementById(`dot-${current}`).classList.add('wrong');
+    document.getElementById(`dot-${current}`).textContent = '✗';
+  }
+
+  feedback.style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'block';
+  document.getElementById('nextBtn').textContent = current < questions.length - 1 ? 'السؤال التالي ←' : '🏆 اعرض النتيجة';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) showResult();
+  else loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('progressBar').style.width = '100%';
+
+  const pct = score / questions.length;
+  let owl, title, stars;
+  if (pct === 1)       { owl = '🦉✨'; title = 'ممتاز! أتقنتَ الفعل اللازم والمتعدي! 🏆'; stars = '⭐⭐⭐'; }
+  else if (pct >= 0.8) { owl = '🦉🌟'; title = 'أحسنت! عمل رائع!'; stars = '⭐⭐⭐'; }
+  else if (pct >= 0.6) { owl = '🦉👍'; title = 'جيد! راجع الدرس وحاول مجدداً!'; stars = '⭐⭐'; }
+  else if (pct >= 0.4) { owl = '🦉💪'; title = 'حاول مرة أخرى!'; stars = '⭐'; }
+  else                  { owl = '🦉🔄'; title = 'لا تستسلم! التكرار مفتاح النجاح!'; stars = '💪'; }
+
+  document.getElementById('resultOwl').textContent = owl;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultScore').innerHTML =
+    `أجبت على <strong>${score}</strong> من أصل <strong>${questions.length}</strong> سؤالاً بشكل صحيح<br>نسبة النجاح: <strong>${Math.round(pct * 100)}%</strong>`;
+  document.getElementById('resultScreen').style.display = 'block';
+}
+
+function restartQuiz() {
+  current = 0; score = 0;
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('resultScreen').style.display = 'none';
+  initScoreBar();
+  loadQuestion();
+}
+
+initScoreBar();
+loadQuestion();
+
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    var overlay = document.getElementById('loaderOverlay');
+    if (overlay) {
+      overlay.classList.add('hidden');
+      setTimeout(function(){ overlay.style.display='none'; }, 500);
+    }
+  }, 500);
+});
+
+</script>
+</body>
+</html>
