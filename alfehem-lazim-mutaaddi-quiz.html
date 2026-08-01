@@ -104,23 +104,23 @@
     line-height: 1.4;
   }
 
-  .btn-nakirah {
+  .btn-lazim {
     background: linear-gradient(135deg, #fff8e1, #ffe082);
     border-color: #f9a825;
     color: #e65100;
   }
-  .btn-nakirah:hover:not(:disabled) {
+  .btn-lazim:hover:not(:disabled) {
     background: linear-gradient(135deg, #ffe082, #ffc107);
     transform: translateY(-3px);
     box-shadow: 0 6px 18px rgba(249,168,37,0.4);
   }
 
-  .btn-marifah {
+  .btn-mutaaddi {
     background: linear-gradient(135deg, #e3f2fd, #90caf9);
     border-color: #1565c0;
     color: #0d47a1;
   }
-  .btn-marifah:hover:not(:disabled) {
+  .btn-mutaaddi:hover:not(:disabled) {
     background: linear-gradient(135deg, #90caf9, #42a5f5);
     transform: translateY(-3px);
     box-shadow: 0 6px 18px rgba(21,101,192,0.4);
@@ -232,13 +232,13 @@
     <div class="question-sentence" id="questionSentence"></div>
     <div class="question-instruction">ما نوع الفعل الأحمر؟</div>
     <div class="answer-btns">
-      <button class="answer-btn btn-nakirah" id="btnLazim" onclick="checkAnswer('لازم')">
-        نَكِرَةٌ
-        <span class="btn-sub">بدون ال – غير محدد</span>
+      <button class="answer-btn btn-lazim" id="btnLazim" onclick="checkAnswer('لازم')">
+        فِعْلٌ لَازِمٌ
+        <span class="btn-sub">لا يحتاج مفعولاً به</span>
       </button>
-      <button class="answer-btn btn-marifah" id="btnMutaaddi" onclick="checkAnswer('متعدٍّ')">
-        مَعْرِفَةٌ
-        <span class="btn-sub">بـ ال أو اسم علم</span>
+      <button class="answer-btn btn-mutaaddi" id="btnMutaaddi" onclick="checkAnswer('متعدٍّ')">
+        فِعْلٌ مُتَعَدٍّ
+        <span class="btn-sub">يحتاج مفعولاً به</span>
       </button>
     </div>
   </div>
@@ -434,8 +434,8 @@ function loadQuestion() {
   document.getElementById('nextBtn').style.display = 'none';
   document.getElementById('btnLazim').disabled = false;
   document.getElementById('btnMutaaddi').disabled = false;
-  document.getElementById('btnLazim').className = 'answer-btn btn-nakirah';
-  document.getElementById('btnMutaaddi').className = 'answer-btn btn-marifah';
+  document.getElementById('btnLazim').className = 'answer-btn btn-lazim';
+  document.getElementById('btnMutaaddi').className = 'answer-btn btn-mutaaddi';
 }
 
 function checkAnswer(selected) {
