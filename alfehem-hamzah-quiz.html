@@ -58,15 +58,34 @@
   .loader-sub { font-size: 0.85rem; color: #388e3c; font-weight: 700; margin-top: 10px; }
   @keyframes load-anim { 0%{width:0%} 60%{width:80%} 100%{width:100%} }
   @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} } .answer-btn { font-size: 1.2rem; padding: 12px 8px; } }
-
-
-  @media (max-width: 480px) {
-    .question-sentence { font-size: 1.1rem; }
     .answer-btn { padding: 16px 8px !important; min-height: 56px; }
     .answer-btns { gap: 8px; }
     .next-btn { padding: 20px !important; margin-top: 14px !important; font-size: 1.1rem; }
     .feedback { margin-bottom: 20px !important; }
   }
+
+  @media (max-width: 500px) {
+    body { padding: 10px 8px; }
+    .quiz-container { max-width: 100%; }
+    .header { padding: 12px 14px; margin-bottom: 10px; }
+    .header-title { font-size: 1rem; }
+    .header-sub { font-size: 0.75rem; }
+    .question-card { padding: 18px 12px; margin-bottom: 10px; }
+    .question-sentence { font-size: 1.1rem; line-height: 1.9; margin-bottom: 14px; }
+    .question-instruction { font-size: 0.88rem; margin-bottom: 12px; }
+    .answer-btns { gap: 8px; }
+    .answer-btn { font-size: 1rem !important; padding: 18px 8px !important; min-height: 60px !important; border-radius: 12px; }
+    .btn-sub { font-size: 0.62rem !important; }
+    .feedback { font-size: 0.9rem; padding: 12px; margin-bottom: 16px; margin-top: 4px; }
+    .next-btn { padding: 20px !important; font-size: 1.05rem !important; margin-top: 10px; border-radius: 12px; min-height: 60px; }
+    .score-bar { gap: 4px; margin-bottom: 10px; }
+    .score-dot { width: 18px; height: 18px; font-size: 0.6rem; }
+    .progress-text { font-size: 0.78rem; margin-bottom: 8px; }
+    .result-screen { padding: 24px 14px; }
+    .result-title { font-size: 1.2rem; }
+    .owl { font-size: 1.8rem; }
+  }
+
 </style>
 </head>
 <body>
