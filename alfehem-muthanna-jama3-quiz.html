@@ -86,6 +86,11 @@
     .owl { font-size: 1.8rem; }
   }
 
+
+  .feedback-wrap { min-height: 100px; margin-bottom: 10px; }
+  .feedback { margin-bottom: 0; }
+  .next-btn-wrap { min-height: 70px; }
+
 </style>
 </head>
 <body>
@@ -112,8 +117,8 @@
     <div class="question-instruction" id="questionInstruction">اختر الصيغة الصحيحة للكلمة في الفراغ</div>
     <div class="answer-btns" id="answerBtns"></div>
   </div>
-  <div class="feedback" id="feedback"></div>
-  <button class="next-btn" style="touch-action:manipulation;" id="nextBtn" onclick="nextQuestion()">السؤال التالي ←</button>
+  <div class="feedback-wrap"><div class="feedback" id="feedback"></div></div>
+  <div class="next-btn-wrap"><button class="next-btn" style="touch-action:manipulation;" id="nextBtn" >السؤال التالي ←</button></div>
   <div class="result-screen" id="resultScreen">
     <div class="result-owl" id="resultOwl">🦉</div>
     <div class="result-title" id="resultTitle"></div>
@@ -271,6 +276,24 @@ initScoreBar(); loadQuestion();
 
 // Fix mobile touch delay
 document.addEventListener('touchstart', function(){}, {passive: true});
+
+
+// Fix next button for mobile iFrame
+(function() {
+  var btn = document.getElementById('nextBtn');
+  if (!btn) return;
+  var fired = false;
+  function handleNext(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (fired) return;
+    fired = true;
+    setTimeout(function() { fired = false; }, 500);
+    nextQuestion();
+  }
+  btn.addEventListener('touchend', handleNext, {passive: false});
+  btn.addEventListener('click', handleNext);
+})();
 
 </script>
 </body>
