@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   body {
     font-family: 'Tajawal', sans-serif;
     direction: rtl;
@@ -268,7 +268,7 @@
   </div>
 
   <div class="feedback" id="feedback"></div>
-  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">السؤال التالي ←</button>
+  <button class="next-btn" style="touch-action:manipulation;" id="nextBtn" onclick="nextQuestion()">السؤال التالي ←</button>
 
   <div class="result-screen" id="resultScreen">
     <div class="result-owl" id="resultOwl">🦉</div>
@@ -576,6 +576,10 @@ window.addEventListener('load', function() {
     }
   }, 500);
 });
+
+
+// Fix mobile touch delay
+document.addEventListener('touchstart', function(){}, {passive: true});
 
 </script>
 </body>

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   body { font-family: 'Tajawal', sans-serif; direction: rtl; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); min-height: 100vh; padding: 16px; display: flex; align-items: flex-start; justify-content: center; }
   .quiz-container { width: 100%; max-width: 680px; }
   .header { background: linear-gradient(135deg, #2e7d32, #43a047); border-radius: 18px; padding: 16px 20px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 16px rgba(46,125,50,0.3); }
@@ -124,7 +124,7 @@
     </div>
   </div>
   <div class="feedback" id="feedback"></div>
-  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">السؤال التالي ←</button>
+  <button class="next-btn" style="touch-action:manipulation;" id="nextBtn" onclick="nextQuestion()">السؤال التالي ←</button>
   <div class="result-screen" id="resultScreen">
     <div class="result-owl" id="resultOwl">🦉</div>
     <div class="result-title" id="resultTitle"></div>
@@ -264,6 +264,10 @@ window.addEventListener('load', function() {
     }
   }, 500);
 });
+
+
+// Fix mobile touch delay
+document.addEventListener('touchstart', function(){}, {passive: true});
 
 </script>
 </body>
