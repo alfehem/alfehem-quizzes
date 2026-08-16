@@ -182,9 +182,6 @@
     padding: 12px 30px; font-size: 1rem; font-weight: 800;
     font-family: 'Tajawal', sans-serif; cursor: pointer;
   }
-
-  @media (max-width: 480px) {
-    .question-sentence { font-size: 1.2rem; }
     .answer-btn { font-size: 1.1rem; padding: 14px 8px; }
   }
 
@@ -202,6 +199,14 @@
   .loader-sub { font-size: 0.85rem; color: #388e3c; font-weight: 700; margin-top: 10px; }
   @keyframes load-anim { 0%{width:0%} 60%{width:80%} 100%{width:100%} }
 
+
+  @media (max-width: 480px) {
+    .question-sentence { font-size: 1.1rem; }
+    .answer-btn { padding: 16px 8px !important; min-height: 56px; }
+    .answer-btns { gap: 8px; }
+    .next-btn { padding: 20px !important; margin-top: 14px !important; font-size: 1.1rem; }
+    .feedback { margin-bottom: 20px !important; }
+  }
 </style>
 </head>
 <body>
