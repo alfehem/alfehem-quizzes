@@ -200,8 +200,18 @@
   @keyframes load-anim { 0%{width:0%} 60%{width:80%} 100%{width:100%} }
     .answer-btn { padding: 16px 8px !important; min-height: 56px; }
     .answer-btns { gap: 8px; }
-    .next-btn { padding: 20px !important; margin-top: 14px !important; font-size: 1.1rem; }
-    .feedback { margin-bottom: 20px !important; }
+    .next-btn { padding: 20px !important; margin-top: 14px !important; font-size: 1.1rem;
+    display: none; }
+    .feedback {
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: none;
+    line-height: 1.6;
+  }
   }
 
   @media (max-width: 500px) {
@@ -216,8 +226,18 @@
     .answer-btns { gap: 8px; }
     .answer-btn { font-size: 1rem !important; padding: 18px 8px !important; min-height: 60px !important; border-radius: 12px; }
     .btn-sub { font-size: 0.62rem !important; }
-    .feedback { font-size: 0.9rem; padding: 12px; margin-bottom: 16px; margin-top: 4px; }
-    .next-btn { padding: 20px !important; font-size: 1.05rem !important; margin-top: 10px; border-radius: 12px; min-height: 60px; }
+    .feedback {
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: none;
+    line-height: 1.6;
+  }
+    .next-btn { padding: 20px !important; font-size: 1.05rem !important; margin-top: 10px; border-radius: 12px; min-height: 60px;
+    display: none; }
     .score-bar { gap: 4px; margin-bottom: 10px; }
     .score-dot { width: 18px; height: 18px; font-size: 0.6rem; }
     .progress-text { font-size: 0.78rem; margin-bottom: 8px; }
@@ -225,11 +245,16 @@
     .result-title { font-size: 1.2rem; }
     .owl { font-size: 1.8rem; }
   }
-
-
-  .feedback-wrap { min-height: 100px; margin-bottom: 10px; }
-  .feedback { margin-bottom: 0; }
-  .next-btn-wrap { min-height: 70px; }
+  .feedback {
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: none;
+    line-height: 1.6;
+  }
 
 </style>
 </head>
@@ -272,8 +297,8 @@
     </div>
   </div>
 
-  <div class="feedback-wrap"><div class="feedback" id="feedback"></div></div>
-  <div class="next-btn-wrap"><button class="next-btn" style="touch-action:manipulation;" id="nextBtn" >السؤال التالي ←</button></div>
+  <div class="feedback" id="feedback">
+  <button class="next-btn" style="touch-action:manipulation;" id="nextBtn" >السؤال التالي ←</button>
 
   <div class="result-screen" id="resultScreen">
     <div class="result-owl" id="resultOwl">🦉</div>
@@ -583,26 +608,10 @@ window.addEventListener('load', function() {
 });
 
 
-// Fix mobile touch delay
-document.addEventListener('touchstart', function(){}, {passive: true});
 
 
-// Fix next button for mobile iFrame
-(function() {
-  var btn = document.getElementById('nextBtn');
-  if (!btn) return;
-  var fired = false;
-  function handleNext(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    if (fired) return;
-    fired = true;
-    setTimeout(function() { fired = false; }, 500);
-    nextQuestion();
-  }
-  btn.addEventListener('touchend', handleNext, {passive: false});
-  btn.addEventListener('click', handleNext);
-})();
+
+
 
 </script>
 </body>

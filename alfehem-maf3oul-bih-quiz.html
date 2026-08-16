@@ -35,12 +35,22 @@
   .answer-btn.wrong-ans { background: linear-gradient(135deg, #ffc8c8, #f44336) !important; border-color: #c62828 !important; color: white !important; animation: shake 0.4s; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
   .btn-sub { display: block; font-size: 0.72rem; font-weight: 700; opacity: 0.8; margin-top: 2px; }
-  .feedback { text-align: center; padding: 12px 16px; border-radius: 14px; font-size: 1rem; font-weight: 800; margin-bottom: 20px; display: none; line-height: 1.6; }
+  .feedback {
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: none;
+    line-height: 1.6;
+  }
   .feedback.correct-fb { background: #e8f5e9; color: #2e7d32; border: 2px solid #4caf50; }
   .feedback.wrong-fb { background: #ffebee; color: #c62828; border: 2px solid #f44336; }
   .next-btn { width: 100%; padding: 18px; background: linear-gradient(90deg, #2e7d32, #43a047); color: white; border: none; border-radius: 14px; font-size: 1.05rem; font-weight: 800; font-family: 'Tajawal', sans-serif; cursor: pointer; display: none; box-shadow: 0 3px 10px rgba(46,125,50,0.3); transition: transform 0.15s; }
   .next-btn:hover { transform: translateY(-2px); }
-  .next-btn { margin-top: 8px; }
+  .next-btn { margin-top: 8px;
+    display: none; }
   .result-screen { background: white; border: 3px solid #81c784; border-radius: 20px; padding: 30px 20px; text-align: center; display: none; }
   .result-owl { font-size: 4rem; margin-bottom: 12px; }
   .result-title { font-size: 1.5rem; font-weight: 800; color: #1b5e20; margin-bottom: 8px; }
@@ -63,8 +73,18 @@
   @keyframes load-anim { 0%{width:0%} 60%{width:80%} 100%{width:100%} }
     .answer-btn { padding: 16px 8px !important; min-height: 56px; }
     .answer-btns { gap: 8px; }
-    .next-btn { padding: 20px !important; margin-top: 14px !important; font-size: 1.1rem; }
-    .feedback { margin-bottom: 20px !important; }
+    .next-btn { padding: 20px !important; margin-top: 14px !important; font-size: 1.1rem;
+    display: none; }
+    .feedback {
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: none;
+    line-height: 1.6;
+  }
   }
 
   @media (max-width: 500px) {
@@ -79,8 +99,18 @@
     .answer-btns { gap: 8px; }
     .answer-btn { font-size: 1rem !important; padding: 18px 8px !important; min-height: 60px !important; border-radius: 12px; }
     .btn-sub { font-size: 0.62rem !important; }
-    .feedback { font-size: 0.9rem; padding: 12px; margin-bottom: 16px; margin-top: 4px; }
-    .next-btn { padding: 20px !important; font-size: 1.05rem !important; margin-top: 10px; border-radius: 12px; min-height: 60px; }
+    .feedback {
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: none;
+    line-height: 1.6;
+  }
+    .next-btn { padding: 20px !important; font-size: 1.05rem !important; margin-top: 10px; border-radius: 12px; min-height: 60px;
+    display: none; }
     .score-bar { gap: 4px; margin-bottom: 10px; }
     .score-dot { width: 18px; height: 18px; font-size: 0.6rem; }
     .progress-text { font-size: 0.78rem; margin-bottom: 8px; }
@@ -88,11 +118,16 @@
     .result-title { font-size: 1.2rem; }
     .owl { font-size: 1.8rem; }
   }
-
-
-  .feedback-wrap { min-height: 100px; margin-bottom: 10px; }
-  .feedback { margin-bottom: 0; }
-  .next-btn-wrap { min-height: 70px; }
+  .feedback {
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: none;
+    line-height: 1.6;
+  }
 
 </style>
 </head>
@@ -129,8 +164,9 @@
       </button>
     </div>
   </div>
-  <div class="feedback-wrap"><div class="feedback" id="feedback"></div></div>
-  <div class="next-btn-wrap"><button class="next-btn" style="touch-action:manipulation;" id="nextBtn" >السؤال التالي ←</button></div>
+  <div class="feedback" id="feedback">
+  <button class="next-btn" style="touch-action:manipulation;" id="nextBtn" >السؤال التالي ←</button>
+
   <div class="result-screen" id="resultScreen">
     <div class="result-owl" id="resultOwl">🦉</div>
     <div class="result-title" id="resultTitle"></div>
@@ -392,26 +428,10 @@ window.addEventListener('load', function() {
 });
 
 
-// Fix mobile touch delay
-document.addEventListener('touchstart', function(){}, {passive: true});
 
 
-// Fix next button for mobile iFrame
-(function() {
-  var btn = document.getElementById('nextBtn');
-  if (!btn) return;
-  var fired = false;
-  function handleNext(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    if (fired) return;
-    fired = true;
-    setTimeout(function() { fired = false; }, 500);
-    nextQuestion();
-  }
-  btn.addEventListener('touchend', handleNext, {passive: false});
-  btn.addEventListener('click', handleNext);
-})();
+
+
 
 </script>
 </body>
